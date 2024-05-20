@@ -9,7 +9,7 @@ WORKDIR /usr/app
 
 COPY package*.json ./
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1
-RUN npm install
+RUN bun install
 
 COPY . .
 

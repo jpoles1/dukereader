@@ -48,7 +48,6 @@ export class Duke {
 		await page.click("button[type=submit]");
 		// Wait for login to authenticate
 		await page.waitForNavigation();
-		console.log("Logged in successfully!");
 	}
 	async read_api(): Promise<any> {
 		const api_url = "https://p-auth.duke-energy.com/form/PlanRate/GetEnergyUsage";
@@ -87,7 +86,7 @@ export class Duke {
 		const parser = new XMLParser();
 		const raw_data = parser.parse(api_xml)["html"]["body"]["ns3:entry"]["ns3:link"]["ns3:content"]
 		const data = raw_data["espi:intervalblock"]
-		const reading_interval = data["espi:interval"]["espi:duration"]
+		const reading_interval = data["espi:interval"]["espi:secondsperinterval"]
 		const readings = data["espi:intervalreading"].map((reading: any) => {
 			if (reading["espi:readingquality"] != "ACTUAL") {
 				return undefined
@@ -97,11 +96,12 @@ export class Duke {
 				value: reading["espi:value"]
 			}
 		}).filter((x: any) => x !== undefined)
-		fs.writeFileSync("duke.json", JSON.stringify(readings, null, 2));
+		fs.writeFileSync("duke.json", JSON.stringify(raw_data, null, 2));
+		console.log(reading_interval)
 		return readings.map((reading: any) => {
 			return {
-				startTime: new Date(reading["time"]),
-				endTime: new Date(reading["time"] + reading_interval),
+				startTime: new Date(reading["time"] * 1000),
+				endTime: new Date((reading["time"] + reading_interval)  * 1000),
 				energy: reading["value"]
 			}
 		})

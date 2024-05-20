@@ -1,6 +1,9 @@
 {
   "name": "dukereader",
   "module": "index.ts",
+  "scripts": {
+    "start": "bun src/index.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
@@ -17,6 +20,7 @@
     "fastify": "^4.27.0",
     "moment": "^2.30.1",
     "puppeteer": "^22.9.0",
+    "sqlite3": "^5.1.7",
     "trilogy": "^2.0.5"
   }
 }

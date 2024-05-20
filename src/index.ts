@@ -18,7 +18,7 @@ if (!fs.existsSync(output_dir)) {
 }
 
 async function main() {
-	const db = connect(`./${output_dir}/storage.db`);
+	const db = connect(`./${output_dir}/storage.sqlite`);
 
 	process.on("exit", function () {
 		db.close();
@@ -70,14 +70,7 @@ async function main() {
 	}
 
 	async function db_store(raw_data: any) {
-		const filtered_data = raw_data.reads
-			.filter((row: any) => {
-				return row.value !== null && row.value !== undefined;
-			})
-			.reverse()
-			.map((row: any): EnergyEntry => {
-				return { startTime: new Date(row.startTime), endTime: new Date(row.endTime), energy: row.value };
-			}) as EnergyEntry[];
+		const filtered_data = raw_data as EnergyEntry[];
 		for (const row of filtered_data) {
 			await energyModel.updateOrCreate({ startTime: row.startTime, endTime: row.endTime }, { energy: row.energy }).catch((e) => {
 				console.log(chalk.red(`Err: ${e}`));
