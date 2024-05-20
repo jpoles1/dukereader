@@ -85,9 +85,26 @@ export class Duke {
 
 		// Parse XML
 		const parser = new XMLParser();
-		const raw_data = parser.parse(api_xml);
-		fs.writeFileSync("duke.json", JSON.stringify(raw_data, null, 2));
-		
+		const raw_data = parser.parse(api_xml)["html"]["body"]["ns3:entry"]["ns3:link"]["ns3:content"]
+		const data = raw_data["espi:intervalblock"]
+		const reading_interval = data["espi:interval"]["espi:duration"]
+		const readings = data["espi:intervalreading"].map((reading: any) => {
+			if (reading["espi:readingquality"] != "ACTUAL") {
+				return undefined
+			}
+			return {
+				time: reading["espi:timeperiod"]["espi:start"],
+				value: reading["espi:value"]
+			}
+		}).filter((x: any) => x !== undefined)
+		fs.writeFileSync("duke.json", JSON.stringify(readings, null, 2));
+		return readings.map((reading: any) => {
+			return {
+				startTime: new Date(reading["time"]),
+				endTime: new Date(reading["time"] + reading_interval),
+				energy: reading["value"]
+			}
+		})
 	}
 	async fetch_once(): Promise<void> {
 		await this.init();
