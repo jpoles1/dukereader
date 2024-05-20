@@ -1,4 +1,4 @@
-FROM bun:debian
+FROM oven/bun:debian
 
 RUN apt-get update && apt-get install -y chromium jq
 

@@ -1,5 +1,5 @@
 {
-  "name": "ConEd/ORU Electric Meter",
+  "name": "Duke Energy Electric Meter",
   "version": "0.6.3",
   "slug": "coned",
   "description": "Read your Duke Energy power meter into your Home Assistant",
